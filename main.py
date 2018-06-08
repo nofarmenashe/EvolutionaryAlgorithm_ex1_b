@@ -33,23 +33,24 @@ def load_datasets():
 if __name__ == "__main__":
     print("loading dataset")
     train_data, val_data, test_data = load_datasets()
+    #
+    # part = sys.argv[1]
+    #
+    # if part == 'a':
+    #     print("start backprop")
+    #     backprop_args = BackpropArgs(28*28, 10, 0.01, [240, 120], 30)
+    #     print(backprop_args.learning_rate)
+    #     print(backprop_args.hidden_layers_sizes)
+    #     backProp = BackPropModel(backprop_args)
+    #
+    #     backProp.train(train_data, val_data)
+    #     print("Test Accuracy:", str(backProp.test(test_data)) + "%")
+    #     print("Train Accuracy:", str(backProp.test(train_data)) + "%")
 
-    part = sys.argv[1]
+    # if part == 'b':
 
-    if part == 'a':
-        print("start backprop")
-        backprop_args = BackpropArgs(28*28, 10, 0.01, [240, 120], 30)
-        print(backprop_args.learning_rate)
-        print(backprop_args.hidden_layers_sizes)
-        backProp = BackPropModel(backprop_args)
-
-        backProp.train(train_data, val_data)
-        print("Test Accuracy:", str(backProp.test(test_data)) + "%")
-        print("Train Accuracy:", str(backProp.test(train_data)) + "%")
-
-    if part == 'b':
-        print("start GA")
-        GA_args = GAArgs(20, 0.1, 0.15, 0.05)
-        print(GA_args.population_size, GA_args.mutation_rate, GA_args.replication_rate, GA_args.elitism_rate)
-        GA = GAModel(GA_args)
-        GA.train(train_data, val_data, test_data)
+    print("start GA")
+    GA_args = GAArgs(20, 0.4, 0.19, 0.05)
+    print(GA_args.population_size, GA_args.replication_rate, GA_args.mutation_rate, GA_args.elitism_rate)
+    GA = GAModel(GA_args)
+    GA.train(train_data, val_data, test_data)

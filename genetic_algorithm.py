@@ -67,8 +67,10 @@ class GAModel:
         return layers
 
     def breed_parents(self, p1: BackPropModel, p2: BackPropModel):
-        lr = random.sample([p1.args.learning_rate, p2.args.learning_rate], k=1)[0]
-        epochs = random.sample([p1.args.epochs, p2.args.epochs], k=1)[0]
+        # lr = random.sample([p1.args.learning_rate, p2.args.learning_rate], k=1)[0]
+        # epochs = random.sample([p1.args.epochs, p2.args.epochs], k=1)[0]
+        lr = 0.01
+        epochs = 10
         activation, d_activation = random.sample([(p1.args.f, p1.args.df), (p2.args.f, p2.args.df)], k=1)[0]
         hidden_layers = self.breed_layers(list(p1.args.hidden_layers_sizes), list(p2.args.hidden_layers_sizes))
 
@@ -84,18 +86,12 @@ class GAModel:
         return children
 
     def mutate(self, chromosome: BackPropModel):
-        parameter_to_mutate = random.randint(1, 4)
+        parameter_to_mutate = random.randint(1, 2)
         if parameter_to_mutate == 1:
-            print("mutate lr")
-            chromosome.args.learning_rate =  chromosome.args.choose_lr()
-        if parameter_to_mutate == 2:
             print("mutate hidden layers")
             chromosome.args.hidden_layers_sizes = chromosome.args.choose_hidden_layers()
             chromosome.layers = chromosome.args.create_layers_list()
-        if parameter_to_mutate == 3:
-            print("mutate epochs")
-            chromosome.args.epochs = chromosome.args.choose_epochs()
-        if parameter_to_mutate == 4:
+        if parameter_to_mutate == 2:
             print("mutate f")
             chromosome.args.f, chromosome.args.df = chromosome.args.choose_activation()
         return chromosome
@@ -116,15 +112,15 @@ class GAModel:
             new_population = []
 
             # train_batch = random.sample(train_dataset, k=100)
-            print("Shuffle Data")
-            random.shuffle(train_dataset)
-            random.shuffle(test_dataset)
+            # print("Shuffle Data")
+            # random.shuffle(train_dataset)
+            # random.shuffle(test_dataset)
 
             # calculate fitnesses
             print("Calc Fitnesses")
             # if population_fitnesses:
             #     # filter all pop fit of not changed
-            population_fitnesses.extend([(nn, self.fitness(nn, train_dataset[:100], val_dataset))
+            population_fitnesses.extend([(nn, self.fitness(nn, train_dataset[:1000], val_dataset))
                                          for nn in self.population])
 
             population_fitnesses.sort(key=operator.itemgetter(1))

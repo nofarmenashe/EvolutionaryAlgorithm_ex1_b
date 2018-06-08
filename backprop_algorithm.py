@@ -58,7 +58,10 @@ class BackpropArgs:
         self.epochs = self.choose_epochs()
 
     def choose_hidden_layers(self):
-        return -np.sort(-np.array(random.sample(range(self.output_size, self.input_size), k=2)))
+        layers = sorted(random.sample([64, 128, 256, 512, 768, 1024], k=2))
+        layers = layers[::-1]
+        return layers
+        # return -np.sort(-np.array(random.sample(range(self.output_size, self.input_size), k=2)))
 
     def choose_activation(self):
         activation_functions = [(sigmoid, d_sigmoid), (tanh, d_tanh), (RELU, d_RELU)]
