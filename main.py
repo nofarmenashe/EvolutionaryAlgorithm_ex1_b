@@ -50,7 +50,7 @@ if __name__ == "__main__":
     # if part == 'b':
 
     print("start GA")
-    GA_args = GAArgs(20, 0.4, 0.4, 0.05)
+    GA_args = GAArgs(20, 0.4, 0.2, 0.05)
     print(GA_args.population_size, GA_args.replication_rate, GA_args.mutation_rate, GA_args.elitism_rate)
     GA = GAModel(GA_args)
     GA.train(train_data, val_data, test_data)

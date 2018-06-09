@@ -110,7 +110,7 @@ class GAModel:
         return mutated_population
 
     def train_best(self, best: BackPropModel, dataset):
-        best.args.epochs = 20
+        best.args.epochs = 1
         best.train(dataset)
         best.args.epochs = 1
 
@@ -118,7 +118,9 @@ class GAModel:
         best_fitness = (None, 0)
         population_fitnesses = []
         generation_number = 1
-        while best_fitness[1] < 98:
+        best_accuracy = 0
+
+        while best_accuracy < 98:
             new_population = []
 
             # train_batch = random.sample(train_dataset, k=100)
@@ -142,6 +144,8 @@ class GAModel:
             print(best_fitness[1])
 
             num_of_elit = int(self.elitism_rate * self.population_size)
+            elit_chromosomes = [copy.deepcopy(population_fitness[0]) for population_fitness
+                                   in population_fitnesses[:num_of_elit]]
 
             # replication - select randomly from the rest
             print("Start Replication")
@@ -160,8 +164,6 @@ class GAModel:
 
             # elitism - select top
             print("Start Elitism")
-            elit_chromosomes = [copy.deepcopy(population_fitness[0]) for population_fitness
-                                   in population_fitnesses[:num_of_elit]]
             new_population.extend(elit_chromosomes)
 
             self.population = new_population
@@ -170,8 +172,6 @@ class GAModel:
 
             best_accuracy = best_fitness[0].test(test_dataset)
             print("BEST: ", best_accuracy)
-
-            best_fitness = [best_fitness[0], best_accuracy]
 
             print("Finish Generation: ", generation_number)
             generation_number += 1
