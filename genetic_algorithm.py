@@ -1,6 +1,7 @@
 import operator
 import random
 import numpy as np
+import copy
 
 from backprop_algorithm import BackPropModel, BackpropArgs
 
@@ -40,9 +41,12 @@ class GAModel:
         return population
 
     def fitness(self, nn_chromosome: BackPropModel, train_dataset, val_dataset):
+        print("train")
         nn_chromosome.train(train_dataset)
+        print("test")
         accuracy = nn_chromosome.test(val_dataset)
-        # print(str(accuracy) + "%")
+
+        print(accuracy)
         return accuracy
 
     def replication(self, population_list):
@@ -70,7 +74,7 @@ class GAModel:
         # lr = random.sample([p1.args.learning_rate, p2.args.learning_rate], k=1)[0]
         # epochs = random.sample([p1.args.epochs, p2.args.epochs], k=1)[0]
         lr = 0.01
-        epochs = 10
+        epochs = 1
         activation, d_activation = random.sample([(p1.args.f, p1.args.df), (p2.args.f, p2.args.df)], k=1)[0]
         hidden_layers = self.breed_layers(list(p1.args.hidden_layers_sizes), list(p2.args.hidden_layers_sizes))
 
@@ -105,9 +109,15 @@ class GAModel:
                 mutated_population.append(chromosome)
         return mutated_population
 
+    def train_best(self, best: BackPropModel, dataset):
+        best.args.epochs = 20
+        best.train(dataset)
+        best.args.epochs = 1
+
     def train(self, train_dataset, val_dataset, test_dataset):
         best_fitness = (None, 0)
         population_fitnesses = []
+        generation_number = 1
         while best_fitness[1] < 98:
             new_population = []
 
@@ -120,7 +130,9 @@ class GAModel:
             print("Calc Fitnesses")
             # if population_fitnesses:
             #     # filter all pop fit of not changed
-            population_fitnesses.extend([(nn, self.fitness(nn, train_dataset[:1000], val_dataset))
+
+            train_set = random.sample(train_dataset, k=1000)
+            population_fitnesses.extend([(nn, self.fitness(nn, train_set, val_dataset))
                                          for nn in self.population])
 
             population_fitnesses.sort(key=operator.itemgetter(1))
@@ -148,12 +160,21 @@ class GAModel:
 
             # elitism - select top
             print("Start Elitism")
-            elit_chromosomes = [population_fitness[0] for population_fitness
+            elit_chromosomes = [copy.deepcopy(population_fitness[0]) for population_fitness
                                    in population_fitnesses[:num_of_elit]]
             new_population.extend(elit_chromosomes)
 
-            print("Finish Generation")
             self.population = new_population
+
+            self.train_best(best_fitness[0], train_dataset)
+
+            best_accuracy = best_fitness[0].test(test_dataset)
+            print("BEST: ", best_accuracy)
+
+            best_fitness = [best_fitness[0], best_accuracy]
+
+            print("Finish Generation: ", generation_number)
+            generation_number += 1
 
         accuracy = best_fitness[0].test(test_dataset)
         print("Test Acuuracy: " + str(accuracy))

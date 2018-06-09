@@ -68,10 +68,10 @@ class BackpropArgs:
         return random.choice(activation_functions)
 
     def choose_lr(self):
-        return random.uniform(0.001, 0.02)
+        return 0.01
 
     def choose_epochs(self):
-        return random.randint(1, 20)
+        return 1
 
 
 class BackPropModel:
